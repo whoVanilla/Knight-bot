@@ -1,5 +1,7 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
 
 const client = new Client({
   intents: [
@@ -10,95 +12,48 @@ const client = new Client({
   ]
 });
 
+const commands = new Map();
+
+const loadCommands = (dir) => {
+  const files = fs.readdirSync(dir);
+
+  for (const file of files) {
+    const filepath = path.join(dir, file);
+    const stat = fs.statSync(filepath);
+
+    if (stat.isDirectory()) {
+      loadCommands(filepath);
+    } else if (file.endsWith('.js')) {
+      const command = require(filepath);
+      commands.set(command.name, command);
+    }
+  }
+};
+
+loadCommands(path.join(__dirname, 'commands'));
+
 client.once('ready', () => {
   console.log('Bot is online!');
 
-    // Rich presence
   client.user.setPresence({
-    activities: [{ name: 'Vanilla', type: 2 }],
-    status: 'dnd' 
+    activities: [{
+      name: 'Vanilla',
+      type: 2,
+    }],
+    status: 'dnd'
   });
 });
 
-client.on('messageCreate', async message => {
+client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
-  // Kick 
-  if (message.content.startsWith('!kick')) {
-    if (!message.member.permissions.has('KICK_MEMBERS')) {
-      return message.reply('You don\'t have permission to kick members!');
-    }
-    const member = message.mentions.members.first();
-    if (member) {
-      await member.kick();
-      
-      // Embed
-      const kickEmbed = new EmbedBuilder()
-        .setColor('#000000') 
-        .setTitle('Member Kicked Successfully!')
-        .setDescription(`${member.user.tag} has been kicked!`)
-        .addFields(
-          { name: 'Kicked By', value: message.author.tag },
-          { name: 'User ID', value: member.id }
-        )
-        .setTimestamp();
+  const args = message.content.slice(1).trim().split(/ +/);
+  const commandName = args.shift().toLowerCase();
 
-      message.channel.send({ embeds: [kickEmbed] });
-    } else {
-      message.channel.send('You need to mention a member!');
-    }
+  if (commands.has(commandName)) {
+    const command = commands.get(commandName);
+    command.execute(message, args);
   }
-
-  // Ban 
-  if (message.content.startsWith('!ban')) {
-    if (!message.member.permissions.has('BAN_MEMBERS')) {
-      return message.reply('You don\'t have permission to ban members!');
-    }
-    const member = message.mentions.members.first();
-    if (member) {
-      await member.ban();
-      
-      // Embed
-      const banEmbed = new EmbedBuilder()
-        .setColor('#000000')
-        .setTitle('Member Banned Successfully!')
-        .setDescription(`${member.user.tag} has been banned!`)
-        .addFields(
-          { name: 'Banned By', value: message.author.tag },
-          { name: 'User ID', value: member.id }
-        )
-        .setTimestamp();
-
-      message.channel.send({ embeds: [banEmbed] });
-    } else {
-      message.channel.send('You need to mention a member!');
-    }
-  }
-
-    // Userinfo
-    if (message.content.startsWith('!userinfo')) {
-        const member = message.mentions.members.first() || message.member;
-    
-        const roles = member.roles.cache
-          .filter(role => role.id !== message.guild.id)
-          .map(role => `<@&${role.id}>`)
-          .join(', ') || 'No roles';
-    
-        const userInfoEmbed = new EmbedBuilder()
-          .setColor('#000000')
-          .setTitle(`User Info for ${member.user.tag}`)
-          .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 1024 }))
-          .addFields(
-            { name: 'User ID', value: member.user.id, inline: true },
-            { name: 'Account Created', value: member.user.createdAt.toDateString(), inline: true },
-            { name: 'Joined Server', value: member.joinedAt.toDateString(), inline: true },
-            { name: 'Nickname', value: member.displayName, inline: true },
-            { name: 'Roles', value: roles, inline: false }
-          )
-          .setTimestamp();
-    
-        message.channel.send({ embeds: [userInfoEmbed] });
-      }
 });
 
 client.login(process.env.DISCORD_TOKEN);
