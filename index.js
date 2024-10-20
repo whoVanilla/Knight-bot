@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 
 const client = new Client({
   intents: [
@@ -17,7 +17,7 @@ client.once('ready', () => {
 client.on('messageCreate', async message => {
   if (message.author.bot) return;
 
-  // Kick
+  // Kick 
   if (message.content.startsWith('!kick')) {
     if (!message.member.permissions.has('KICK_MEMBERS')) {
       return message.reply('You don\'t have permission to kick members!');
@@ -25,13 +25,25 @@ client.on('messageCreate', async message => {
     const member = message.mentions.members.first();
     if (member) {
       await member.kick();
-      message.channel.send(`${member.user.tag} has been kicked.`);
+      
+      // Embed
+      const kickEmbed = new EmbedBuilder()
+        .setColor('#000000') 
+        .setTitle('Member Kicked Successfully')
+        .setDescription(`${member.user.tag} has been kicked!`)
+        .addFields(
+          { name: 'Kicked By', value: message.author.tag },
+          { name: 'User ID', value: member.id }
+        )
+        .setTimestamp();
+
+      message.channel.send({ embeds: [kickEmbed] });
     } else {
       message.channel.send('You need to mention a member!');
     }
   }
 
-  // Ban
+  // Ban 
   if (message.content.startsWith('!ban')) {
     if (!message.member.permissions.has('BAN_MEMBERS')) {
       return message.reply('You don\'t have permission to ban members!');
@@ -39,7 +51,19 @@ client.on('messageCreate', async message => {
     const member = message.mentions.members.first();
     if (member) {
       await member.ban();
-      message.channel.send(`${member.user.tag} has been banned.`);
+      
+      // Embed
+      const banEmbed = new EmbedBuilder()
+        .setColor('#000000')
+        .setTitle('Member Banned')
+        .setDescription(`${member.user.tag} has been banned.`)
+        .addFields(
+          { name: 'Banned By', value: message.author.tag },
+          { name: 'User ID', value: member.id }
+        )
+        .setTimestamp();
+
+      message.channel.send({ embeds: [banEmbed] });
     } else {
       message.channel.send('You need to mention a member!');
     }
