@@ -12,6 +12,12 @@ const client = new Client({
 
 client.once('ready', () => {
   console.log('Bot is online!');
+
+    // Rich presence
+  client.user.setPresence({
+    activities: [{ name: 'Vanilla', type: 2 }],
+    status: 'dnd' 
+  });
 });
 
 client.on('messageCreate', async message => {
@@ -29,7 +35,7 @@ client.on('messageCreate', async message => {
       // Embed
       const kickEmbed = new EmbedBuilder()
         .setColor('#000000') 
-        .setTitle('Member Kicked Successfully')
+        .setTitle('Member Kicked Successfully!')
         .setDescription(`${member.user.tag} has been kicked!`)
         .addFields(
           { name: 'Kicked By', value: message.author.tag },
@@ -55,8 +61,8 @@ client.on('messageCreate', async message => {
       // Embed
       const banEmbed = new EmbedBuilder()
         .setColor('#000000')
-        .setTitle('Member Banned')
-        .setDescription(`${member.user.tag} has been banned.`)
+        .setTitle('Member Banned Successfully!')
+        .setDescription(`${member.user.tag} has been banned!`)
         .addFields(
           { name: 'Banned By', value: message.author.tag },
           { name: 'User ID', value: member.id }
