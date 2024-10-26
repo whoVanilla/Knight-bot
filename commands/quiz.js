@@ -63,7 +63,7 @@ module.exports = {
                     const correctAnswer = questionData.correct_answer;
 
                     const resultEmbed = new EmbedBuilder()
-                        .setColor(0x3a3763)
+                        .setColor('#ffffff')
                         .setTitle(userAnswer === correctAnswer ? "Correct!" : "Wrong!")
                         .setDescription(`The correct answer was: **${correctAnswer}**`);
 
@@ -75,7 +75,7 @@ module.exports = {
                     collector.stop();
                 });
 
-                collector.on("end", (collected, reason) => {
+                collector.on("end", (reason) => {
                     if (reason === "time") {
                         const timeoutEmbed = new EmbedBuilder()
                             .setColor('#fc0303')
@@ -96,6 +96,6 @@ module.exports = {
         };
 
         fetchQuestion();
-        quizInterval = setInterval(fetchQuestion, 1200000);
+        quizInterval = setInterval(fetchQuestion, 300000);
     },
 };

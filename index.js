@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { Client, Collection, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, EmbedBuilder, ActivityType } = require('discord.js');
 require('dotenv').config();
 
 const client = new Client({
@@ -26,8 +26,8 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-    console.log(`${client.user.tag} Bot is up and running!`);
-    client.user.setActivity('Vanilla', { type: 'LISTENING' });
+    console.log(`The bot is up and running!`);
+    client.user.setActivity('Vanilla', { type: ActivityType.Listening });
 });
 
 client.on('messageCreate', message => {
