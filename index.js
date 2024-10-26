@@ -1,59 +1,54 @@
-require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const { Client, Collection, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+require('dotenv').config();
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers
-  ]
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
 });
 
-const commands = new Map();
+client.commands = new Collection();
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
-const loadCommands = (dir) => {
-  const files = fs.readdirSync(dir);
-
-  for (const file of files) {
-    const filepath = path.join(dir, file);
-    const stat = fs.statSync(filepath);
-
-    if (stat.isDirectory()) {
-      loadCommands(filepath);
-    } else if (file.endsWith('.js')) {
-      const command = require(filepath);
-      commands.set(command.name, command);
+for (const file of commandFiles) {
+    const filePath = path.join(commandsPath, file);
+    const command = require(filePath);
+    if (command.name && typeof command.execute === 'function') {
+        client.commands.set(command.name, command);
+    } else {
+        console.warn(`The command at ${filePath} is missing a required "name" or "execute" property.`);
     }
-  }
-};
-
-loadCommands(path.join(__dirname, 'commands'));
+}
 
 client.once('ready', () => {
-  console.log('Bot is online!');
-
-  client.user.setPresence({
-    activities: [{
-      name: 'Vanilla',
-      type: 2,
-    }],
-    status: 'dnd'
-  });
+    console.log(`${client.user.tag} Bot is up and running!`);
+    client.user.setActivity('Vanilla', { type: 'LISTENING' });
 });
 
-client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
+client.on('messageCreate', message => {
+    if (!message.content.startsWith('!') || message.author.bot) return;
 
-  const args = message.content.slice(1).trim().split(/ +/);
-  const commandName = args.shift().toLowerCase();
+    const args = message.content.slice(1).trim().split(/ +/);
+    const commandName = args.shift().toLowerCase();
+    const command = client.commands.get(commandName);
 
-  if (commands.has(commandName)) {
-    const command = commands.get(commandName);
-    command.execute(message, args);
-  }
+    if (!command) return;
+
+    try {
+        command.execute(message, args);
+    } catch (error) {
+        console.error(`Error executing command ${commandName}:`, error);
+        const errorEmbed = new EmbedBuilder()
+            .setTitle("Error")
+            .setDescription("There was an error trying to execute that command!")
+            .setColor('#fc0303');
+        message.channel.send({ embeds: [errorEmbed] });
+    }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.TOKEN);
