@@ -26,7 +26,7 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-    console.log(`\x1b[1m\x1b[96mThe bot is up and running!`);
+    console.log(`\x1b[1m\x1b[96mThe bot is up and running!\x1b[0m`);
     client.user.setActivity('Vanilla', { type: ActivityType.Listening });
 });
 

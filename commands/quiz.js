@@ -20,7 +20,7 @@ module.exports = {
       return;
     }
 
-    console.log(`\x1b[0mA quiz has been started in \x1b[32m${message.guild.name} \x1b[0mby \x1b[1m\x1b[95m${message.author.username}.`);
+    console.log(`\x1b[0mA quiz has been started in \x1b[94m${message.guild.name} \x1b[0mby \x1b[1m\x1b[95m${message.author.username}.`);
     message.channel.send({
       embeds: [new EmbedBuilder().setColor("#00FF00").setTitle("The quiz has started!")],
     });
@@ -34,7 +34,7 @@ module.exports = {
         const embed = new EmbedBuilder()
           .setColor("#3498db")
           .setTitle("True or False?")
-          .setDescription(question);
+          .setDescription(`${question}`);
 
         const row = new ActionRowBuilder().addComponents(
           new ButtonBuilder().setCustomId("true").setLabel("True").setStyle(ButtonStyle.Success),
