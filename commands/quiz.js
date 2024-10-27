@@ -2,100 +2,106 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("
 const axios = require("axios");
 
 let quizInterval;
-let isQuizActive = false;
+let inactivityTimer;
 
 module.exports = {
-    name: "quiz",
-    async execute(message) {
-        if (isQuizActive) {
-            clearInterval(quizInterval);
-            isQuizActive = false;
-            const stopEmbed = new EmbedBuilder()
-                .setColor('#000000')
-                .setDescription("Quiz has been stopped.");
-            return message.channel.send({ embeds: [stopEmbed] });
-        }
+  name: "quiz",
+  description: "Starts a true/false quiz in this channel.",
+  async execute(message, args) {
+    if (quizInterval) {
+      clearInterval(quizInterval);
+      quizInterval = null;
+      clearTimeout(inactivityTimer);
+      
+      message.channel.send({
+        embeds: [new EmbedBuilder().setColor("#FF0000").setTitle("The quiz has been stopped.")],
+      });
+      console.log(`${message.author.username} stopped the quiz in ${message.guild.name}.`);
+      return;
+    }
 
-        isQuizActive = true;
-        const startEmbed = new EmbedBuilder()
-            .setColor('#ffffff')
-            .setTitle("Quiz has started!")
-            .setDescription("Answer each question with True or False. Type `!quiz` again to stop.");
-        message.channel.send({ embeds: [startEmbed] });
+    console.log(`\x1b[0mA quiz has been started in \x1b[32m${message.guild.name} \x1b[0mby \x1b[1m\x1b[95m${message.author.username}.`);
+    message.channel.send({
+      embeds: [new EmbedBuilder().setColor("#00FF00").setTitle("The quiz has started!")],
+    });
 
-        const fetchQuestion = async () => {
-            try {
-                const response = await axios.get("https://opentdb.com/api.php?amount=1&type=boolean");
-                const questionData = response.data.results[0];
-                const questionEmbed = new EmbedBuilder()
-                    .setColor('#ab7aff')
-                    .setTitle("True or False?")
-                    .setDescription(questionData.question);
+    async function sendQuizQuestion() {
+      try {
+        const response = await axios.get("https://opentdb.com/api.php?amount=1&type=boolean");
+        const question = response.data.results[0].question;
+        const correctAnswer = response.data.results[0].correct_answer;
 
-                const row = new ActionRowBuilder()
-                    .addComponents(
-                        new ButtonBuilder()
-                            .setCustomId("true")
-                            .setLabel("True")
-                            .setStyle(ButtonStyle.Success),
-                        new ButtonBuilder()
-                            .setCustomId("false")
-                            .setLabel("False")
-                            .setStyle(ButtonStyle.Danger)
-                    );
+        const embed = new EmbedBuilder()
+          .setColor("#3498db")
+          .setTitle("True or False?")
+          .setDescription(question);
 
-                const questionMessage = await message.channel.send({
-                    embeds: [questionEmbed],
-                    components: [row],
-                });
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder().setCustomId("true").setLabel("True").setStyle(ButtonStyle.Success),
+          new ButtonBuilder().setCustomId("false").setLabel("False").setStyle(ButtonStyle.Danger)
+        );
 
-                const filter = (interaction) => {
-                    return ["true", "false"].includes(interaction.customId) && !interaction.user.bot;
-                };
+        const quizMessage = await message.channel.send({ embeds: [embed], components: [row] });
 
-                const collector = questionMessage.createMessageComponentCollector({
-                    filter,
-                    time: 15000,
-                });
+        const filter = (interaction) =>
+          interaction.isButton() &&
+          ["true", "false"].includes(interaction.customId) &&
+          interaction.message.id === quizMessage.id;
 
-                collector.on("collect", async (interaction) => {
-                    const userAnswer = interaction.customId === "true" ? "True" : "False";
-                    const correctAnswer = questionData.correct_answer;
+        const collector = quizMessage.createMessageComponentCollector({
+          filter,
+          time: 5 * 60 * 1000, 
+        });
 
-                    const resultEmbed = new EmbedBuilder()
-                        .setColor('#ffffff')
-                        .setTitle(userAnswer === correctAnswer ? "Correct!" : "Wrong!")
-                        .setDescription(`The correct answer was: **${correctAnswer}**`);
+        const usersAnswered = new Set();
 
-                    await interaction.update({
-                        embeds: [resultEmbed],
-                        components: [],
-                    });
+        inactivityTimer = setTimeout(() => {
+          clearInterval(quizInterval);
+          quizInterval = null;
+          message.channel.send({
+            embeds: [
+              new EmbedBuilder()
+                .setColor("#FF0000")
+                .setTitle("The quiz has stopped due to inactivity."),
+            ],
+          });
+          console.log(`The quiz stopped in \x1b[1m\x1b[32m${message.guild.name} due to inactivity.`);
+        }, 5 * 60 * 1000); 
 
-                    collector.stop();
-                });
+        collector.on("collect", (interaction) => {
+          const userId = interaction.user.id;
+          
+          if (usersAnswered.has(userId)) {
+            interaction.reply({ content: "You've already answered this question!", ephemeral: true });
+            return;
+          }
 
-                collector.on("end", (reason) => {
-                    if (reason === "time") {
-                        const timeoutEmbed = new EmbedBuilder()
-                            .setColor('#fc0303')
-                            .setDescription("Time's up! No one answered in time.");
-                        questionMessage.edit({
-                            embeds: [timeoutEmbed],
-                            components: [],
-                        });
-                    }
-                });
-            } catch (error) {
-                console.error(error);
-                const errorEmbed = new EmbedBuilder()
-                    .setColor('#fc0303')
-                    .setDescription("An error occurred while fetching the quiz question.");
-                message.channel.send({ embeds: [errorEmbed] });
-            }
-        };
+          const answer = interaction.customId === "true" ? "True" : "False";
+          const isCorrect = answer === correctAnswer;
 
-        fetchQuestion();
-        quizInterval = setInterval(fetchQuestion, 300000);
-    },
+          usersAnswered.add(userId);
+
+          if (isCorrect) {
+            interaction.reply({
+              embeds: [new EmbedBuilder().setColor("#00FF00").setDescription(`${interaction.user} answered correctly!`)],
+            });
+          } else {
+            interaction.reply({
+              embeds: [new EmbedBuilder().setColor("#FF0000").setDescription(`${interaction.user} answered incorrectly!`)],
+            });
+          }
+        });
+
+        collector.on("end", () => {
+          clearTimeout(inactivityTimer);
+        });
+      } catch (error) {
+        console.error("Failed to fetch quiz question:", error);
+      }
+    }
+
+    await sendQuizQuestion();
+
+    quizInterval = setInterval(sendQuizQuestion, 5 * 60 * 1000);
+  },
 };
