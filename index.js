@@ -26,7 +26,7 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-    console.log(`The bot is up and running!`);
+    console.log(`\x1b[1m\x1b[96mThe bot is up and running!`);
     client.user.setActivity('Vanilla', { type: ActivityType.Listening });
 });
 
@@ -41,7 +41,7 @@ client.on('messageCreate', message => {
 
     try {
         command.execute(message, args);
-        console.log(`\x1b[33m${message.author.username}\x1b[0m executed the \x1b[36m${command.name}\x1b[0m command in \x1b[36m${message.guild.name}\x1b[0m.`);
+        console.log(`\x1b[33m${message.author.username}\x1b[0m executed the \x1b[1m\x1b[91m!${command.name}\x1b[0m command in \x1b[36m${message.guild.name}\x1b[0m.`);
     } catch (error) {
         console.error(`Error executing command ${commandName}:`, error);
         const errorEmbed = new EmbedBuilder()
