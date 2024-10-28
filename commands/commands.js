@@ -7,10 +7,11 @@ module.exports = {
             .setColor('#000000')
             .setTitle('All available commands for Knight bot')
             .setDescription([
-                '`!ban` - Bans a member',
-                '`!kick` - Kicks a member',
+                '`!ban [user]` - Bans a member',
+                '`!kick [user]` - Kicks a member',
                 '`!quiz` - Starts or stops a quiz',
-                '`!clear` - Clears messages from a channel',
+                '`!clear [number of messages]` - Clears messages from a channel',
+                '`!weather [city name]` - Shows current weather of a specified location',
                 '`!userinfo` - Shows user information'
             ].join('\n'));
 
