@@ -108,7 +108,7 @@ module.exports = {
             ],
           });
           console.log(
-            `The quiz stopped in \x1b[1m\x1b[96m${message.guild.name} Reset: \x1b[0mdue to inactivity.Reset: \x1b[0m`
+            `\x1b[1m\x1b[91mThe quiz stopped in ${message.guild.name} due to inactivity.\x1b[0m`
           );
         }, 5 * 60 * 1000);
 
