@@ -5,3 +5,12 @@ Green (success) = #53c26d
 Black (general) = #000000
 White (general) = #ffffff
 Purple (information) = #ab7aff
+
+Console color codes
+Bright Red: \x1b[91m
+Bright Green: \x1b[92m
+Bright Yellow: \x1b[93m
+Bright Cyan: \x1b[96m
+Bright White: \x1b[97m
+Reset: \x1b[0m
+Bold: \x1b[1m

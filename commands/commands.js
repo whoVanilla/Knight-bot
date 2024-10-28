@@ -9,7 +9,7 @@ module.exports = {
             .setDescription([
                 '`!ban` - Bans a member',
                 '`!kick` - Kicks a member',
-                '`!quiz` - Starts a quiz',
+                '`!quiz` - Starts or stops a quiz',
                 '`!userinfo` - Shows user information'
             ].join('\n'));
 
