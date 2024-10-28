@@ -10,6 +10,7 @@ module.exports = {
                 '`!ban` - Bans a member',
                 '`!kick` - Kicks a member',
                 '`!quiz` - Starts or stops a quiz',
+                '`!clear` - Clears messages from a channel',
                 '`!userinfo` - Shows user information'
             ].join('\n'));
 

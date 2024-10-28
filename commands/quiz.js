@@ -40,13 +40,13 @@ module.exports = {
         ],
       });
       console.log(
-        `${message.author.username} stopped the quiz in ${message.guild.name}.`
+        `\x1b[1m\x1b[91m${message.author.username} stopped the quiz in ${message.guild.name}.\x1b[0m`
       );
       return;
     }
 
     console.log(
-      `\x1b[0mA quiz has been started in \x1b[94m${message.guild.name} \x1b[0mby \x1b[1m\x1b[91m${message.author.username}.\x1b[0m`
+      `\x1b[1m\x1b[92mA quiz has been started in ${message.guild.name} by ${message.author.username}.\x1b[0m`
     );
     message.channel.send({
       embeds: [
