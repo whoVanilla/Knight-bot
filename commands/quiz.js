@@ -133,7 +133,7 @@ module.exports = {
               embeds: [
                 new EmbedBuilder()
                   .setColor("#00FF00")
-                  .setDescription(`${interaction.user} answered correctly!`),
+                  .setDescription(`${interaction.user} answered correctly! Here's a Sushi for them 🍣.`),
               ],
               ephemeral: false,
             });
@@ -142,7 +142,7 @@ module.exports = {
               embeds: [
                 new EmbedBuilder()
                   .setColor("#FF0000")
-                  .setDescription(`${interaction.user} answered incorrectly!`),
+                  .setDescription(`${interaction.user} answered incorrectly! Nice try tho.`),
               ],
               ephemeral: false,
             });
