@@ -10,24 +10,41 @@ set "RED=[31m"
 
 rem Start the bot and save the start time
 set "start_time=%time%"
-start /b node index.js
+set "bot_pid="
+call :start_bot
 
 rem Infinite loop to listen for commands
 :loop
-set /p command="Enter command (stop/runtime/info): "
+set /p command="Enter command (stop/runtime/info/reload): "
 
 if /i "!command!"=="stop" (
-    taskkill /F /IM node.exe
+    taskkill /PID !bot_pid! /F
     echo !YELLOW!Bot has been stopped.!RESET!
     exit /b
 ) else if /i "!command!"=="runtime" (
     call :get_runtime
 ) else if /i "!command!"=="info" (
     echo !CYAN!Knight bot, is a test bot developed by @whovanilla. Contact her for help.!RESET!
+) else if /i "!command!"=="reload" (
+    call :reload_bot
 ) else (
-    echo !RED!Invalid command. Try 'stop', 'runtime', or 'info'.!RESET!
+    echo !RED!Invalid command. Try 'stop', 'runtime', 'info', or 'reload'.!RESET!
 )
 goto loop
+
+:start_bot
+rem Start the bot in the background and get its process ID
+start /b node index.js
+for /f "tokens=2" %%a in ('tasklist /FI "IMAGENAME eq node.exe" /FO LIST ^| findstr PID') do set "bot_pid=%%a"
+echo !GREEN!Bot started with PID !bot_pid!!RESET!
+exit /b
+
+:reload_bot
+rem Kill the existing bot process and start it again
+taskkill /PID !bot_pid! /F
+echo !YELLOW!Reloading bot...!RESET!
+call :start_bot
+exit /b
 
 :get_runtime
 rem Get current time and calculate runtime
