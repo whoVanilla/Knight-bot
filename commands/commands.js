@@ -12,6 +12,9 @@ module.exports = {
                 '`!quiz` - Starts or stops a quiz',
                 '`!clear [number of messages]` - Clears messages from a channel',
                 '`!weather [city name]` - Shows current weather of a specified location',
+                '`!random` - Sends a random fact',
+                '`!random [time]m` - Sets a random fact interval in that channel. eg: `!random 30m` for 30 mins of interval',
+                '`!random [stop]` - Stops the random fact interval in that channel.',
                 '`!userinfo` - Shows user information'
             ].join('\n'));
 
