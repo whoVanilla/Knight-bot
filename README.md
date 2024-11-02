@@ -14,6 +14,8 @@
  - `!coinflip` - Flips a coin for Heads or Tails result.
  - `!waifu` - Sends a juicy image of waifus hourly.
  - `!waifu stop` - Stops the waifu interval in that channel.
+ - `!nsfw` - Sends an NSFW image.
+ - `!nsfw stop` - Stops the NSFW interval in that channel.
  - `!commands` - Shows the list of available commands.
 
 
