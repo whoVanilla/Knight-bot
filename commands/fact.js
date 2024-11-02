@@ -4,7 +4,7 @@ const axios = require("axios");
 const intervals = {};
 
 module.exports = {
-  name: "random",
+  name: "fact",
   description: "Send a random fact or set an interval for random facts.",
   async execute(message, args) {
     const channel = message.channel;
