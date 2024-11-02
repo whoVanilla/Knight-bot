@@ -12,6 +12,8 @@
  - `!userinfo` - Shows your user-info.
  - `!userinfo [@user]` - Shows the tagged user's info.
  - `!coinflip` - Flips a coin for Heads or Tails result.
+ - `!waifu` - Sends a juicy image of waifus hourly.
+ - `!waifu stop` - Stops the waifu interval in that channel.
  - `!commands` - Shows the list of available commands.
 
 
