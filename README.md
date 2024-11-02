@@ -11,6 +11,7 @@
  - `!fact stop` - Stops the random fact interval in that channel.
  - `!userinfo` - Shows your user-info.
  - `!userinfo [@user]` - Shows the tagged user's info.
+ - `!coinflip` - Flips a coin for Heads or Tails result.
  - `!commands` - Shows the list of available commands.
 
 
