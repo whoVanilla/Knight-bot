@@ -1,33 +1,35 @@
 const { EmbedBuilder } = require("discord.js");
 const axios = require("axios");
 
-let animeInterval;
-
+const animeIntervals = new Map();
 module.exports = {
   name: "waifu",
   description:
-    "Sends an anime image immediately and every hour in this channel.",
+    "Sends an waifu image immediately and every hour in this channel.",
   async execute(message, args) {
     const subCommand = args[0] ? args[0].toLowerCase() : null;
+    const channelId = message.channel.id;
 
     if (subCommand === "stop") {
-      if (animeInterval) {
-        clearInterval(animeInterval);
-        animeInterval = null;
+      if (animeIntervals.has(channelId)) {
+        clearInterval(animeIntervals.get(channelId));
+        animeIntervals.delete(channelId);
         message.channel.send({
           embeds: [
             new EmbedBuilder()
               .setColor("#FF0000")
-              .setTitle("Anime images stopped."),
+              .setTitle("Waifu images stopped for this channel."),
           ],
         });
-        console.log(`Anime images stopped in ${message.guild.name}`);
+        console.log(
+          `Waifu images stopped in ${message.guild.name} (#${message.channel.name})`
+        );
       } else {
         message.channel.send({
           embeds: [
             new EmbedBuilder()
               .setColor("#FF0000")
-              .setTitle("No anime image interval is running in this channel."),
+              .setTitle("No waifu image interval is running in this channel."),
           ],
         });
       }
@@ -43,19 +45,22 @@ module.exports = {
 
         await message.channel.send({ embeds: [embed] });
       } catch (error) {
-        console.error("Failed to fetch anime image:", error);
+        console.error("Failed to fetch waifu image:", error);
         message.channel.send({
           embeds: [
             new EmbedBuilder()
               .setColor("#FF0000")
-              .setTitle("Failed to fetch an anime image."),
+              .setTitle("Failed to fetch a waifu image."),
           ],
         });
       }
     }
 
     await sendAnimeImage();
-
-    animeInterval = setInterval(sendAnimeImage, 60 * 60 * 1000);
+    if (animeIntervals.has(channelId)) {
+      clearInterval(animeIntervals.get(channelId));
+    }
+    const interval = setInterval(sendAnimeImage, 2 * 60 * 1000);
+    animeIntervals.set(channelId, interval);
   },
 };
