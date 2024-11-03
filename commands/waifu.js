@@ -60,7 +60,7 @@ module.exports = {
     if (animeIntervals.has(channelId)) {
       clearInterval(animeIntervals.get(channelId));
     }
-    const interval = setInterval(sendAnimeImage, 2 * 60 * 1000);
+    const interval = setInterval(sendAnimeImage, 60 * 60 * 1000);
     animeIntervals.set(channelId, interval);
   },
 };
