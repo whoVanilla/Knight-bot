@@ -16,6 +16,7 @@
  - `!waifu stop` - Stops the waifu interval in that channel.
  - `!nsfw` - Sends an NSFW image.
  - `!nsfw stop` - Stops the NSFW interval in that channel.
+ - `!reminder [hh:mm] [dd/mm/yyyy] [reason]` - Sets a reminder for you.
  - `!commands` - Shows the list of available commands.
 
 
