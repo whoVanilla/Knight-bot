@@ -1,4 +1,4 @@
-Colors
+Colors - 
 Red (error) = #fc0303
 Orange (warn) = #ff8400
 Green (success) = #53c26d
@@ -6,7 +6,7 @@ Black (general) = #000000
 White (general) = #ffffff
 Purple (information) = #ab7aff
 
-Console color codes
+Console color codes - 
 Bright Red: \x1b[91m
 Bright Green: \x1b[92m
 Bright Yellow: \x1b[93m
