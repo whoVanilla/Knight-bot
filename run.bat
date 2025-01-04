@@ -15,7 +15,7 @@ call :start_bot
 
 rem Infinite loop to listen for commands
 :loop
-set /p command="Enter command (stop/runtime/info/reload): "
+set /p command="Enter command (stop/runtime/info/reload/github): "
 
 if /i "!command!"=="stop" (
     taskkill /PID !bot_pid! /F
@@ -27,8 +27,10 @@ if /i "!command!"=="stop" (
     echo !CYAN!Knight bot, is a test bot developed by @whovanilla. Contact her for help.!RESET!
 ) else if /i "!command!"=="reload" (
     call :reload_bot
+) else if /i "!command!"=="github" (
+    call :github_command
 ) else (
-    echo !RED!Invalid command. Try 'stop', 'runtime', 'info', or 'reload'.!RESET!
+    echo !RED!Invalid command. Try 'stop', 'runtime', 'info', 'reload', or 'github'.!RESET!
 )
 goto loop
 
@@ -80,4 +82,9 @@ set /a seconds=diff_sec%%60
 
 echo !YELLOW!Bot has been running for !hours! hours, !minutes! minutes, and !seconds! seconds.!RESET!
 endlocal
+exit /b
+
+:github_command
+rem Display the GitHub link
+echo !CYAN!Visit my GitHub: https://github.com/whoVanilla !RESET!
 exit /b
