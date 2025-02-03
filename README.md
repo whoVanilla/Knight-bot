@@ -22,7 +22,7 @@
 
 # About this bot
 
-**Knight bot** is a discord bot written in **JavaScript** for testing or personal use only. It's currently under development and I am still adding new commands and features everyday. Join my [**discord**](https://discord.gg/eM93FsUJpa)  if you have any question, want to use the bot or run into any issue.
+**Knight bot** is a discord bot written in **JavaScript** for testing or personal use only. It's currently under development and I am still adding new commands and features everyday. Contact me on discord @whovanilla if you have any question, want to use the bot or run into any issue.
 
 
 > **Happy coding!** 
